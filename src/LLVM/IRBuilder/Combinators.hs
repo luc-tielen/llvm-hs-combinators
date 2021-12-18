@@ -1,27 +1,20 @@
-{-# LANGUAGE RecursiveDo, OverloadedStrings #-}
+{-# LANGUAGE RecursiveDo, PolyKinds, RoleAnnotations, OverloadedStrings #-}
 
 module LLVM.IRBuilder.Combinators
   ( if'
-  , loop
-  , loopWhile
-  , loopFor
+  , loop, loopWhile, loopFor
   , pointerDiff
   , not'
   , allocate
   , minimum'
-  , eq
-  , ne
-  , sge
-  , sgt
-  , sle
-  , slt
-  , uge
-  , ugt
-  , ule
-  , ult
+  , eq, ne, sge, sgt, sle, slt, uge, ugt, ule, ult
+  , Path(..), mkPath, this
+  , addr, deref, assign, update, increment, copy, swap
   ) where
 
 import Control.Monad.Fix
+import Data.List.NonEmpty (NonEmpty(..))
+import qualified Data.List.NonEmpty as NE
 import LLVM.AST.Type
 import LLVM.AST.Operand ( Operand(..) )
 import LLVM.IRBuilder.Module
@@ -127,4 +120,68 @@ minimum' sign a b = do
         Unsigned -> ult
   isLessThan <- inst a b
   select isLessThan a b
+
+
+newtype Path (a :: k) (b :: k)
+  = Path (NonEmpty Operand)
+type role Path nominal nominal
+
+mkPath :: [Operand] -> Path a b
+mkPath path = Path (int32 0 :| path)
+
+this :: Path a a
+this = mkPath []
+
+(->>) :: Path a b -> Path b c -> Path a c
+Path a2b ->> Path b2c =
+  let b2c' = if NE.head b2c == int32 0
+               then NE.tail b2c
+               else NE.toList b2c
+   in Path $ NE.head a2b :| (NE.tail a2b ++ b2c')
+
+addr :: (MonadModuleBuilder m, MonadIRBuilder m)
+     => Path a b -> Operand -> m Operand
+addr path p = gep p (pathToIndices path)
+  where
+    pathToIndices :: Path a b -> [Operand]
+    pathToIndices (Path indices) =
+      NE.toList indices
+
+deref :: (MonadModuleBuilder m, MonadIRBuilder m)
+      => Path a b -> Operand -> m Operand
+deref path p = do
+  addr <- addr path p
+  load addr 0
+
+assign :: (MonadModuleBuilder m, MonadIRBuilder m)
+       => Path a b -> Operand -> Operand -> m ()
+assign path p value = do
+  dstAddr <- addr path p
+  store dstAddr 0 value
+
+update :: (MonadModuleBuilder m, MonadIRBuilder m)
+       => Path a b
+       -> Operand
+       -> (Operand -> m Operand)
+       -> m ()
+update path p f = do
+  dstAddr <- addr path p
+  store dstAddr 0 =<< f =<< load dstAddr 0
+
+increment :: (MonadModuleBuilder m, MonadIRBuilder m)
+          => (Integer -> Operand) -> Path a b -> Operand -> m ()
+increment ty path p = update path p (add (ty 1))
+
+copy :: (MonadModuleBuilder m, MonadIRBuilder m)
+     => Path a b -> Operand -> Operand -> m ()
+copy path src dst = do
+  value <- deref path src
+  assign path dst value
+
+swap :: (MonadModuleBuilder m, MonadIRBuilder m)
+     => Path a b -> Operand -> Operand -> m ()
+swap path lhs rhs = do
+  tmp <- deref path lhs
+  copy path rhs lhs
+  assign path rhs tmp
 
