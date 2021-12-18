@@ -7,15 +7,25 @@ module LLVM.IRBuilder.Combinators
   , loopFor
   , pointerDiff
   , not'
+  , allocate
+  , minimum'
   ) where
 
 import Control.Monad.Fix
+import LLVM.AST.Type
+import LLVM.AST.Operand ( Operand(..) )
 import LLVM.IRBuilder.Module
 import LLVM.IRBuilder.Monad
 import LLVM.IRBuilder.Constant
 import LLVM.IRBuilder.Instruction
-import LLVM.AST.Operand ( Operand(..) )
-import LLVM.AST.Type
+import qualified LLVM.AST.IntegerPredicate as IP
+
+
+allocate :: MonadIRBuilder m => Type -> Operand -> m Operand
+allocate ty beginValue = do
+  value <- alloca ty (Just (int32 1)) 0
+  store value 0 beginValue
+  pure value
 
 if' :: (MonadIRBuilder m, MonadFix m)
     => Operand -> m a -> m ()
@@ -82,4 +92,16 @@ pointerDiff ty a b = do
 not' :: (MonadModuleBuilder m, MonadIRBuilder m)
      => Operand -> m Operand
 not' bool = select bool (bit 0) (bit 1)
+
+data Signedness = Signed | Unsigned
+
+-- NOTE: only works for unsigned integers!
+minimum' :: (MonadModuleBuilder m, MonadIRBuilder m)
+         => Signedness -> Operand -> Operand -> m Operand
+minimum' sign a b = do
+  let inst = case sign of
+        Signed -> icmp IP.SLT
+        Unsigned -> icmp IP.ULT
+  isLessThan <- inst a b
+  select isLessThan a b
 
