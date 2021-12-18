@@ -9,6 +9,16 @@ module LLVM.IRBuilder.Combinators
   , not'
   , allocate
   , minimum'
+  , eq
+  , ne
+  , sge
+  , sgt
+  , sle
+  , slt
+  , uge
+  , ugt
+  , ule
+  , ult
   ) where
 
 import Control.Monad.Fix
@@ -20,6 +30,19 @@ import LLVM.IRBuilder.Constant
 import LLVM.IRBuilder.Instruction
 import qualified LLVM.AST.IntegerPredicate as IP
 
+
+eq, ne, sge, sgt, sle, slt, uge, ugt, ule, ult
+  :: MonadIRBuilder m => Operand -> Operand -> m Operand
+eq = icmp IP.EQ
+ne = icmp IP.NE
+sge = icmp IP.SGE
+sgt = icmp IP.SGT
+sle = icmp IP.SLE
+slt = icmp IP.SLT
+uge = icmp IP.UGE
+ugt = icmp IP.UGT
+ule = icmp IP.ULE
+ult = icmp IP.ULT
 
 allocate :: MonadIRBuilder m => Type -> Operand -> m Operand
 allocate ty beginValue = do
@@ -100,8 +123,8 @@ minimum' :: (MonadModuleBuilder m, MonadIRBuilder m)
          => Signedness -> Operand -> Operand -> m Operand
 minimum' sign a b = do
   let inst = case sign of
-        Signed -> icmp IP.SLT
-        Unsigned -> icmp IP.ULT
+        Signed -> slt
+        Unsigned -> ult
   isLessThan <- inst a b
   select isLessThan a b
 
