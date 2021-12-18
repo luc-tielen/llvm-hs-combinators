@@ -1,0 +1,37 @@
+name: llvm-hs-combinators
+version: 0.1.0.0
+github: "luc-tielen/llvm-hs-combinators"
+license: BSD3
+author: "Luc Tielen"
+maintainer: "luc.tielen@gmail.com"
+copyright: "Luc Tielen, 2021"
+
+extra-source-files:
+  - README.md
+  - CHANGELOG.md
+
+# Metadata used when publishing your package
+synopsis: Combinators for quickly building commonly used control flow constructs in llvm-hs.
+category: compilers, code-generation, library
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description: Please see the README on GitHub at <https://github.com/luc-tielen/llvm-hs-combinators#readme>
+
+dependencies:
+  - base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+
+tests:
+  llvm-hs-combinators-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - llvm-hs-combinators
