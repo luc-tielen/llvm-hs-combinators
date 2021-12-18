@@ -1,9 +1,12 @@
 {-# LANGUAGE RecursiveDo, OverloadedStrings #-}
 
 module LLVM.IRBuilder.Combinators
-  ( loop
+  ( if'
+  , loop
   , loopWhile
   , loopFor
+  , pointerDiff
+  , not'
   ) where
 
 import Control.Monad.Fix
@@ -12,6 +15,7 @@ import LLVM.IRBuilder.Monad
 import LLVM.IRBuilder.Constant
 import LLVM.IRBuilder.Instruction
 import LLVM.AST.Operand ( Operand(..) )
+import LLVM.AST.Type
 
 if' :: (MonadIRBuilder m, MonadFix m)
     => Operand -> m a -> m ()
@@ -65,4 +69,17 @@ loopFor beginValue condition post asm = mdo
   br begin
   end <- block `named` "for_end"
   pure ()
+
+pointerDiff :: (MonadModuleBuilder m, MonadIRBuilder m)
+            => Type -> Operand -> Operand -> m Operand
+pointerDiff ty a b = do
+  a' <- ptrtoint a i64
+  b' <- ptrtoint b i64
+  result <- sub a' b'
+  trunc result ty
+
+-- NOTE: assumes input is of type i1
+not' :: (MonadModuleBuilder m, MonadIRBuilder m)
+     => Operand -> m Operand
+not' bool = select bool (bit 0) (bit 1)
 
