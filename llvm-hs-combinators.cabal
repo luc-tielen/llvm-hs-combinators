@@ -27,13 +27,14 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      LLVM.IRBuilder.Combinators
   other-modules:
       Paths_llvm_hs_combinators
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , llvm-hs-pure >=9
   default-language: Haskell2010
 
 test-suite llvm-hs-combinators-test
@@ -47,4 +48,5 @@ test-suite llvm-hs-combinators-test
   build-depends:
       base >=4.7 && <5
     , llvm-hs-combinators
+    , llvm-hs-pure >=9
   default-language: Haskell2010
