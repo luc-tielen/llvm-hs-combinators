@@ -7,7 +7,7 @@ module LLVM.IRBuilder.Combinators
     if'
   , loop, loopWhile, loopFor
   -- * GEP-/pointer-related combinators
-  , Path(..), mkPath
+  , Path(..), (->>), mkPath
   , addr, deref, assign, update, increment, copy, swap
   -- * Comparisons
   , eq, ne, sge, sgt, sle, slt, uge, ugt, ule, ult
