@@ -91,7 +91,7 @@ if' :: (MonadIRBuilder m, MonadFix m)
 if' condition asm = mdo
   condBr condition ifBlock end
   ifBlock <- block `named` "if"
-  asm
+  _ <- asm
   br end
   end <- block `named` "end_if"
   pure ()
@@ -107,7 +107,7 @@ loop :: (MonadIRBuilder m, MonadFix m) => m a -> m ()
 loop asm = mdo
   br begin
   begin <- block `named` "loop"
-  asm
+  _ <- asm
   br begin
 
 -- | Combinator for creating a while loop ("while(condition) { ... }")
@@ -124,7 +124,7 @@ loopWhile condition asm = mdo
   result <- condition
   condBr result body end
   body <- block `named` "while_body"
-  asm
+  _ <- asm
   br begin
   end <- block `named` "while_end"
   pure ()
@@ -154,7 +154,7 @@ loopFor beginValue condition post asm = mdo
   result <- condition loopValue
   condBr result bodyStart end
   bodyStart <- block `named` "for_body"
-  asm loopValue
+  _ <- asm loopValue
   updatedValue <- post loopValue
   bodyEnd <- currentBlock
   br begin
@@ -230,8 +230,8 @@ addr path p = gep p (pathToIndices path)
 deref :: (MonadModuleBuilder m, MonadIRBuilder m)
       => Path a b -> Operand -> m Operand
 deref path p = do
-  addr <- addr path p
-  load addr 0
+  address <- addr path p
+  load address 0
 
 -- | Stores a value in a memory location based on a 'Path' and an initial pointer
 --   (stored in the 'Operand').
