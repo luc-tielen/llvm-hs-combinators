@@ -7,7 +7,7 @@ module LLVM.IRBuilder.Combinators
     if'
   , loop, loopWhile, loopFor
   -- * GEP-/pointer-related combinators
-  , Path(..), mkPath, this
+  , Path(..), mkPath
   , addr, deref, assign, update, increment, copy, swap
   -- * Comparisons
   , eq, ne, sge, sgt, sle, slt, uge, ugt, ule, ult
@@ -181,7 +181,7 @@ not' bool = select bool (bit 0) (bit 1)
 data Signedness = Signed | Unsigned
 
 -- | Computes the minimum of 2 'Operand's.
---   NOTE: No check is made if the 2 opernads have the same 'Type'!
+--   NOTE: No check is made if the 2 operands have the same 'Type'!
 minimum' :: (MonadModuleBuilder m, MonadIRBuilder m)
          => Signedness -> Operand -> Operand -> m Operand
 minimum' sign a b = do
