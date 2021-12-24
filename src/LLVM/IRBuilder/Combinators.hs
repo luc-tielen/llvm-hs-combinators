@@ -14,6 +14,7 @@ module LLVM.IRBuilder.Combinators
   -- * General helper functions
   , pointerDiff
   , not'
+  , Signedness(..)
   , minimum'
   , allocate
   ) where
