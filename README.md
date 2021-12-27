@@ -10,8 +10,8 @@ code using the [llvm-hs-pure](https://github.com/llvm-hs/llvm-hs.git) library.
 3. Import `LLVM.IRBuilder.Combinators` in your Haskell code!
 
 For an example of how to do this, see
-[here](https://github.com/luc-tielen/eclair-lang/blob/main/package.yaml)
-and [here](https://github.com/luc-tielen/eclair-lang/blob/main/stack.yaml)
+[here](https://github.com/luc-tielen/eclair-lang/blob/ef514ddbe4cacea91b040b0f2746420e6f1f8dcd/package.yaml#L34)
+and [here](https://github.com/luc-tielen/eclair-lang/blob/ef514ddbe4cacea91b040b0f2746420e6f1f8dcd/stack.yaml#L53-L54).
 
 ## Versioning
 
