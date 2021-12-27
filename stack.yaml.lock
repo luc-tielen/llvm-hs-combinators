@@ -3,7 +3,18 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    name: llvm-hs-pretty
+    version: 0.9.0.0
+    git: https://github.com/luc-tielen/llvm-hs-pretty
+    pantry-tree:
+      size: 5223
+      sha256: 873e6de0735eed620563a0ec13e2e55a6a2910dd4e00b1568e2e0feb6962cf29
+    commit: 990bb6981f6214d9c1bbf46fd9e9ce5596d3bf30
+  original:
+    git: https://github.com/luc-tielen/llvm-hs-pretty
+    commit: 990bb6981f6214d9c1bbf46fd9e9ce5596d3bf30
 snapshots:
 - completed:
     size: 586296

@@ -199,6 +199,7 @@ minimum' sign a b = do
 --   <https://luctielen.com/posts/making_llvm_gep_safer_in_haskell/ blogpost>.
 newtype Path (a :: k) (b :: k)
   = Path (NonEmpty Operand)
+  deriving (Eq, Show)
 type role Path nominal nominal
 
 -- | Constructs a path from a list of indices. Passing in an empty list is the

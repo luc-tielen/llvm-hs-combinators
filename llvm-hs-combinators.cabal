@@ -1,8 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
+--
+-- hash: f2a383b4ba5deffea240fd5eb47f9833109ff58fcdba3e1de0da671f8b78e104
 
 name:           llvm-hs-combinators
 version:        0.1.0.0
@@ -40,14 +42,19 @@ library
 
 test-suite llvm-hs-combinators-test
   type: exitcode-stdio-1.0
-  main-is: Spec.hs
+  main-is: test.hs
   other-modules:
+      Test.LLVM.IRBuilder.CombinatorsSpec
       Paths_llvm_hs_combinators
   hs-source-dirs:
-      test
+      tests
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , hspec >=2.6.1 && <3.0.0
     , llvm-hs-combinators
+    , llvm-hs-pretty
     , llvm-hs-pure >=9
+    , neat-interpolation
+    , text
   default-language: Haskell2010
