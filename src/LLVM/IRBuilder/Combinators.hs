@@ -163,6 +163,8 @@ loopFor beginValue condition post asm = mdo
 
 -- | Calculates the distance between 2 pointers, and converts the result to the
 --   'Type' provided.
+--
+--   Note that the result is in bytes. (This is different compared to C / C++!)
 pointerDiff :: (MonadModuleBuilder m, MonadIRBuilder m)
             => Type -> Operand -> Operand -> m Operand
 pointerDiff ty a b = do
